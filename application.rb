@@ -151,11 +151,42 @@ post '/feed' do
   erb "/feeds/index".to_sym
 end
 
+delete '/feed' do
+  protected!
+  feed = Feed.get(params[:feed][:id])
+  if feed.subscriptions.size > 0
+    feed.subscription.each do |subscription|
+      if subscription.active
+        subscription.unsubscribe
+        if subscription.last_response_code == 202
+          subscription.destroy
+        else
+          return false
+        end
+      end
+    end
+  end
+  feed.destroy
+  @feeds = Feed.all
+  erb "/feeds/index".to_sym
+end
+
 post '/subscription' do
   protected!
   feed = Feed.get(params[:feed][:id])
   subscription = Subscription.new({ :feed_id => feed.id, :feed_url => feed.url })
   subscription.subscribe
+  @subscriptions = Subscription.all
+  erb "subscriptions/index".to_sym
+end
+
+delete '/subscription' do
+  protected!
+  subscription = Subscription.get(params[:subscription][:id])
+  subscription.unsubscribe
+  if subscription.last_response_code == 202
+    subscription.destroy
+  end
   @subscriptions = Subscription.all
   erb "subscriptions/index".to_sym
 end

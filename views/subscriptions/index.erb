@@ -9,6 +9,7 @@
     <td>Last Response Code</td>
     <td>Verified</td>
     <td>Created At</td>
+    <td></td>
   </tr>
   <% @subscriptions.each do |subscription| %>
     <tr>
@@ -19,6 +20,13 @@
       <td><%= subscription.last_response_code %></td>
       <td><%= subscription.verified %></td>
       <td><%= subscription.created_at %></td>
+      <td>
+        <form action="/subscription" method="post">
+          <input type="hidden" name="subscription[id]" value="<%= subscription.id %>">
+          <input type="hidden" name="_method" value="delete" />
+          <input type="submit" value="Delete to this subscription" />
+        </form>
+      </td>
     </tr>
   <% end %>
 </table>

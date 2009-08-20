@@ -15,6 +15,7 @@
     <td>URL</td>
     <td>Hub URL</td>
     <td></td>
+    <td></td>
   </tr>
   <% @feeds.each do |feed| %>
     <tr>
@@ -29,6 +30,13 @@
           </form>
         </td>
       <% end %>
+        <td>
+          <form action="/feed" method="post">
+            <input type="hidden" name="feed[id]" value="<%= feed.id %>">
+            <input type="hidden" name="_method" value="delete" />
+            <input type="submit" value="Delete to this feed" />
+          </form>
+        </td>
     </tr>
   <% end %>
 </table>
