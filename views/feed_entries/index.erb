@@ -1,0 +1,6 @@
+<h1>Listing all Feed Entries</h1>
+<ul>
+  <% @feed_entries.each do |feed_entry| %>
+    <li><%= feed_entry.body %></li>
+  <% end %>
+</ul>
