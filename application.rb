@@ -93,10 +93,10 @@ class Subscription
   end
 
   def unsubscribe
-    self.last_response_code = response_code = self.call_hub('unsubscribe', 'http://phsb.heroku.com/verify', 'async' )
+    self.last_response_code = response_code = self.call_hub('unsubscribe', 'http://pshb.heroku.com/verify', 'async' )
     
     if response_code == 202
-      self.active = false
+      self.active = true
     end
     
     self.save
