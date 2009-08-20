@@ -93,6 +93,7 @@ class Subscription
   end
 
   def unsubscribe
+    self.token = SimpleTokenGenerator.generate(7)
     self.last_response_code = response_code = self.call_hub('unsubscribe', 'http://phsb.heroku.com/verify', 'async' )
     
     if response_code == 202
