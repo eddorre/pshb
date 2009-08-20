@@ -260,7 +260,7 @@ end
 
 post '/post' do
   protected!
-  Logger.info("THIS IS TEST")
+  Logger.warn("THIS IS TEST")
   @post = Post.new(params[:post])
   @post.save
   
