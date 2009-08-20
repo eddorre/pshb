@@ -155,7 +155,7 @@ delete '/feed' do
   protected!
   feed = Feed.get(params[:feed][:id])
   if feed.subscriptions.size > 0
-    feed.subscription.each do |subscription|
+    feed.subscriptions.each do |subscription|
       if subscription.active
         subscription.unsubscribe
         if subscription.last_response_code == 202
