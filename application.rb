@@ -198,14 +198,16 @@ get '/verify' do
   feed_url = params['hub.topic']
   hub_challenge = params['hub.challenge']
   
-  if subscription = Subscription.first(:token => verify_token, :feed_url => feed_url)
-    subscription.verify
-    status 200
-    hub_challenge
-  else
-    status 404
-    "Not found"
-  end
+  # if subscription = Subscription.first(:token => verify_token, :feed_url => feed_url)
+  #   subscription.verify
+  #   status 200
+  #   hub_challenge
+  # else
+  #   status 404
+  #   "Not found"
+  # end
+  status 200
+  hub_challenge
 end
 
 post '/endpoint' do
