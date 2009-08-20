@@ -74,7 +74,7 @@ class Subscription
 
   def subscribe
     self.token = SimpleTokenGenerator.generate(7)
-    self.last_response_code = response_code = self.call_hub('subscribe', 'http://eddorre.com/test', 'async' )
+    self.last_response_code = response_code = self.call_hub('subscribe', 'http://pshb.heroku.com/verify', 'async' )
     
     if response_code == 202
       self.active = true
@@ -84,7 +84,7 @@ class Subscription
   end
 
   def unsubscribe
-    self.last_response_code = response_code = self.call_hub('unsubscribe', 'http://eddorre.com/test', 'async' )
+    self.last_response_code = response_code = self.call_hub('unsubscribe', 'http://phsb.heroku.com/verify', 'async' )
     
     if response_code == 202
       self.active = false
@@ -181,13 +181,6 @@ get '/post' do
   erb "/posts/index".to_sym
 end
 
-get '/post/:post_id' do
-  protected!
-  @post = Post.get(params[:post_id])
-  erb "/posts/show".to_sym
-end
-
-
 get '/post/feed' do
   @posts = Post.all
   builder do |xml|
@@ -196,15 +189,15 @@ get '/post/feed' do
       xml.channel do
         xml.title "pshb"
         xml.description "Pubsubhubbub Test"
-        xml.link "http://linkhere.com"
+        xml.link "http://pshb.heroku.com"
         
         @posts.each do |post|
           xml.item do
             xml.title post.title
-            xml.link "http://linkhere.com/post/#{post.id}"
+            xml.link "http://pshb.heroku.com/post/#{post.id}"
             xml.description post.body
             xml.pubDate Time.parse(post.created_at.to_s).rfc822()
-            xml.guid "http://linkhere.com/post/#{post.id}"
+            xml.guid "http://pshb.heroku.com/post/#{post.id}"
           end
         end
       end
