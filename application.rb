@@ -7,7 +7,7 @@ require 'crack'
 
 use Rack::Flash
 
-enable :sessions
+enable :sessions, :logging
 
 DataMapper.setup(:default, ENV['DATABASE_URL'] || 'sqlite3://my.db')
 # DataObjects::Sqlite3.logger = DataObjects::Logger.new(STDOUT, 0)
@@ -260,6 +260,7 @@ end
 
 post '/post' do
   protected!
+  Logger.info("THIS IS TEST")
   @post = Post.new(params[:post])
   @post.save
   
