@@ -21,9 +21,9 @@
       <td><%= feed.title %></td>
       <td><%= feed.url %></td>
       <td><%= feed.hub_url %></td>
-      <% if feed.hub_url == 'n/a' %>
+      <% unless feed.hub_url == 'n/a' %>
         <td>
-          <form action="/subscribe" method="post">
+          <form action="/subscription" method="post">
             <input type="hidden" name="feed[id]" value="<%= feed.id %>">
             <input type="submit" value="Subscribe to this feed" />
           </form>

@@ -1,0 +1,7 @@
+<h1>Listing all posts</h1>
+<a href="/post/new">Create a new post</a>
+<ul>
+  <% @posts.each do |post| %>
+    <li><%= post.title %></li>
+  <% end %>
+</ul>

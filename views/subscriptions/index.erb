@@ -1,4 +1,24 @@
 <h1>Listing all subscriptions</h1>
 
-<% @subscriptions.each do |subscription| %>
-<% end %>
+<table>
+  <tr>
+    <td>Feed</td>
+    <td>Feed Hub</td>
+    <td>Active</td>
+    <td>Token</td>
+    <td>Last Response Code</td>
+    <td>Verified</td>
+    <td>Created At</td>
+  </tr>
+  <% @subscriptions.each do |subscription| %>
+    <tr>
+      <td><%= subscription.feed.title %></td>
+      <td><%= subscription.feed.hub_url %></td>
+      <td><%= subscription.active %></td>
+      <td><%= subscription.token %></td>
+      <td><%= subscription.last_response_code %></td>
+      <td><%= subscription.verified %></td>
+      <td><%= subscription.created_at %></td>
+    </tr>
+  <% end %>
+</table>
