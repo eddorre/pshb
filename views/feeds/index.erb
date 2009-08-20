@@ -1,0 +1,34 @@
+<% if @feed %>
+  <%= "#{@feed.title} was created successfully" %>
+<% end %>
+<a href="/feed/new">Create a new feed</a>
+<h1>Listing all feeds</h1>
+<ul>
+  <% @feeds.each do |feed| %>
+    <li><%= feed.title %></li>
+  <% end %>
+</ul>
+
+<table>
+  <tr>
+    <td>Title</td>
+    <td>URL</td>
+    <td>Hub URL</td>
+    <td></td>
+  </tr>
+  <% @feeds.each do |feed| %>
+    <tr>
+      <td><%= feed.title %></td>
+      <td><%= feed.url %></td>
+      <td><%= feed.hub_url %></td>
+      <% if feed.hub_url == 'n/a' %>
+        <td>
+          <form action="/subscribe" method="post">
+            <input type="hidden" name="feed[id]" value="<%= feed.id %>">
+            <input type="submit" value="Subscribe to this feed" />
+          </form>
+        </td>
+      <% end %>
+    </tr>
+  <% end %>
+</table>
