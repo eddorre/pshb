@@ -1,4 +1,4 @@
 adamwiggins-rest-client --source gems.github.com
-nakjima-rack-flash --source gems.github.com
+nakajima-rack-flash  --source gems.github.com
 datamapper
 crack
