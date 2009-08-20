@@ -4,6 +4,7 @@ require 'rest_client'
 require 'rack-flash'
 require 'datamapper'
 require 'crack'
+require 'logger'
 
 use Rack::Flash
 
@@ -23,6 +24,11 @@ helpers do
     @auth ||=  Rack::Auth::Basic::Request.new(request.env)
     @auth.provided? && @auth.basic? && @auth.credentials && @auth.credentials == ['carlos', 'meep']
   end
+end
+
+configure do
+  Log = Logger.new(STDOUT)
+  Log.level = Logger::INFO
 end
 
 class Post
@@ -197,6 +203,7 @@ get '/endpoint' do
   verify_token = params['hub.verify_token']
   feed_url = params['hub.topic']
   hub_challenge = params['hub.challenge']
+  Log.info("Hub challenge #{hub_challenge}")
   if subscription = Subscription.first(:token => verify_token, :feed_url => feed_url)
     subscription.verify
     status 200
@@ -260,7 +267,6 @@ end
 
 post '/post' do
   protected!
-  Logger.warn("THIS IS TEST")
   @post = Post.new(params[:post])
   @post.save
   
