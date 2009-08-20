@@ -203,14 +203,11 @@ get '/endpoint' do
   verify_token = params['hub.verify_token']
   feed_url = params['hub.topic']
   hub_challenge = params['hub.challenge']
-  Log.info("Hub challenge #{hub_challenge}")
   if subscription = Subscription.first(:token => verify_token, :feed_url => feed_url)
     subscription.verify
-    status 200
-    hub_challenge
+    throw :halt, [ 200, hub_challenge ]
   else
-    status 404
-    "Not found"
+    throw :halt, [ 404, "Not found" ]  
   end
 end
 
@@ -221,12 +218,11 @@ post '/endpoint' do
     if feed_entry.save
       status 200
     else
-      status 404
+      throw :halt,  [ 404, "Not found"]
       "Not found"
     end
   else
-    status 500
-    "Invalid content type"
+    throw :halt,  [ 500, "Invalid content type"]
   end
 end
 
