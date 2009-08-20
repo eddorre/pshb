@@ -96,7 +96,7 @@ class Subscription
     self.last_response_code = response_code = self.call_hub('unsubscribe', 'http://pshb.heroku.com/verify', 'async' )
     
     if response_code == 202
-      self.active = true
+      self.active = false
     end
     
     self.save
