@@ -21,7 +21,7 @@ class Post
 end
 
 class FeedEntry
-  include DataMapper:Resource
+  include DataMapper::Resource
   property :id, Serial
   property :body, Text
   property :created_at, DateTime
