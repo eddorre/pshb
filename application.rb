@@ -83,7 +83,7 @@ class Subscription
 
   def subscribe
     self.token = SimpleTokenGenerator.generate(7)
-    self.last_response_code = response_code = self.call_hub('subscribe', 'http://pshb.heroku.com/verify', 'async' )
+    self.last_response_code = response_code = self.call_hub('subscribe', 'http://pshb.heroku.com/endpoint', 'async' )
     
     if response_code == 202
       self.active = true
@@ -93,7 +93,7 @@ class Subscription
   end
 
   def unsubscribe
-    self.last_response_code = response_code = self.call_hub('unsubscribe', 'http://pshb.heroku.com/verify', 'async' )
+    self.last_response_code = response_code = self.call_hub('unsubscribe', 'http://pshb.heroku.com/endpoint', 'async' )
     
     if response_code == 202
       self.active = false
@@ -193,31 +193,33 @@ delete '/subscription' do
   erb "subscriptions/index".to_sym
 end
 
-get '/verify' do
+get '/endpoint' do
   verify_token = params['hub.verify_token']
   feed_url = params['hub.topic']
   hub_challenge = params['hub.challenge']
-  
-  # if subscription = Subscription.first(:token => verify_token, :feed_url => feed_url)
-  #   subscription.verify
-  #   status 200
-  #   hub_challenge
-  # else
-  #   status 404
-  #   "Not found"
-  # end
-  status 200
-  hub_challenge
-end
-
-post '/endpoint' do
-  content = request.body.string
-  @feed_entry = FeedEntry.new(:body => content)
-  if @feed_entry.save
+  if subscription = Subscription.first(:token => verify_token, :feed_url => feed_url)
+    subscription.verify
     status 200
+    hub_challenge
   else
     status 404
     "Not found"
+  end
+end
+
+post '/endpoint' do
+  if request.content_type == 'application/atom+xml'
+    content = request.body.string
+    feed_entry = FeedEntry.new(:body => content)
+    if feed_entry.save
+      status 200
+    else
+      status 404
+      "Not found"
+    end
+  else
+    status 500
+    "Invalid content type"
   end
 end
 
