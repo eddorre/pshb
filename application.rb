@@ -10,7 +10,20 @@ use Rack::Flash
 enable :sessions
 
 DataMapper.setup(:default, ENV['DATABASE_URL'] || 'sqlite3://my.db')
-DataObjects::Sqlite3.logger = DataObjects::Logger.new(STDOUT, 0)
+# DataObjects::Sqlite3.logger = DataObjects::Logger.new(STDOUT, 0)
+
+helpers do
+  def protected!
+    response['WWW-Authenticate'] = %(Basic realm="Testing HTTP Auth") and \
+    throw(:halt, [401, "Not authorized\n"]) and \
+    return unless authorized?
+  end
+
+  def authorized?
+    @auth ||=  Rack::Auth::Basic::Request.new(request.env)
+    @auth.provided? && @auth.basic? && @auth.credentials && @auth.credentials == ['carlos', 'meep']
+  end
+end
 
 class Post
   include DataMapper::Resource
@@ -108,15 +121,18 @@ end
 DataMapper.auto_migrate!
 
 get '/feed' do
+  protected!
   @feeds = Feed.all
   erb "/feeds/index".to_sym
 end
 
 get '/feed/new' do
+  protected!
   erb "/feeds/new".to_sym
 end
 
 post '/feed' do
+  protected!
   @feed = Feed.new(params[:feed])
   @feed.hub_url = Feed.find_hub(params[:feed][:url])
   @feed.save
@@ -125,6 +141,7 @@ post '/feed' do
 end
 
 post '/subscription' do
+  protected!
   feed = Feed.get(params[:feed][:id])
   subscription = Subscription.new({ :feed_id => feed.id, :feed_url => feed.url })
   subscription.subscribe
@@ -159,11 +176,13 @@ post '/endpoint' do
 end
 
 get '/post' do
+  protected!
   @posts = Post.all
   erb "/posts/index".to_sym
 end
 
 get '/post/:post_id' do
+  protected!
   @post = Post.get(params[:post_id])
   erb "/posts/show".to_sym
 end
@@ -194,10 +213,12 @@ get '/post/feed' do
 end
 
 get '/post/new' do
+  protected!
   erb "/posts/new".to_sym
 end
 
 post '/post' do
+  protected!
   @post = Post.new(params[:post])
   @post.save
   
@@ -206,6 +227,7 @@ post '/post' do
 end
 
 get '/feed_entries' do
+  protected!
   @feed_entries = FeedEntry.all
   erb "/feed_entries/index".to_sym
 end
