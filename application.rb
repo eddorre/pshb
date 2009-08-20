@@ -53,10 +53,11 @@ class Feed
     feed_response = RestClient.get url
     hashed_feed = Crack::XML.parse(feed_response)
     hub = "n/a"
+    debug = hashed_feed
     if hashed_feed['rss']
       if hashed_feed['rss']['channel']['atom10:link'].is_a?(Array)
         hashed_feed['rss']['channel']['atom10:link'].each do |array|
-          if array['rel']['pub']
+          if array['rel']['hub']
             hub = array['href']
           end
         end
@@ -64,6 +65,8 @@ class Feed
     elsif hashed_feed['feed']
       hub = hashed_feed['feed']['atom10:link']['href']
     end
+    
+    return [debug, hub]
   end
 end
 
@@ -140,7 +143,9 @@ end
 post '/feed' do
   protected!
   @feed = Feed.new(params[:feed])
-  @feed.hub_url = Feed.find_hub(params[:feed][:url])
+  response = Feed.find_hub(params[:feed][:url])
+  @feed.hub_url = response.last
+  @debug = response.first
   @feed.save
   @feeds = Feed.all
   erb "/feeds/index".to_sym
