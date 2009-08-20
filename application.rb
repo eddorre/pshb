@@ -54,7 +54,13 @@ class Feed
     hashed_feed = Crack::XML.parse(feed_response)
     hub = "n/a"
     if hashed_feed['rss']
-      hub = hashed_feed['rss']['channel']['atom10:link']['href']
+      if hashed_feed['rss']['channel']['atom10:link'].is_a?(Array)
+        hashed_feed['rss']['channel']['atom10:link'].each do |array|
+          if array['rel']['pub']
+            hub = array['href']
+          end
+        end
+      end
     elsif hashed_feed['feed']
       hub = hashed_feed['feed']['atom10:link']['href']
     end
