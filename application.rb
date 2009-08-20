@@ -171,6 +171,11 @@ delete '/feed' do
   erb "/feeds/index".to_sym
 end
 
+get '/subscription' do
+  @subscriptions = Subscription.all
+  erb "subscriptions/index".to_sym
+end
+
 post '/subscription' do
   protected!
   feed = Feed.get(params[:feed][:id])
