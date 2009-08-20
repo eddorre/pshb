@@ -20,6 +20,13 @@ class Post
   property :created_at, DateTime
 end
 
+class FeedEntry
+  include DataMapper:Resource
+  property :id, Serial
+  property :body, Text
+  property :created_at, DateTime
+end
+
 class Feed
   include DataMapper::Resource
   property :id, Serial
@@ -141,7 +148,14 @@ get '/verify' do
 end
 
 post '/endpoint' do
-  content = params
+  content = request.body.string
+  @feed_entry = FeedEntry.new(:body => content)
+  if @feed_entry.save
+    status 200
+  else
+    status 404
+    "Not found"
+  end
 end
 
 get '/post' do
@@ -189,4 +203,9 @@ post '/post' do
   
   @posts = Post.all
   erb "/posts/index".to_sym
+end
+
+get '/feed_entries' do
+  @feed_entries = FeedEntry.all
+  erb "/feed_entries/index".to_sym
 end
