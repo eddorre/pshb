@@ -93,7 +93,6 @@ class Subscription
   end
 
   def unsubscribe
-    self.token = SimpleTokenGenerator.generate(7)
     self.last_response_code = response_code = self.call_hub('unsubscribe', 'http://phsb.heroku.com/verify', 'async' )
     
     if response_code == 202
@@ -185,9 +184,6 @@ delete '/subscription' do
   protected!
   subscription = Subscription.get(params[:subscription][:id])
   subscription.unsubscribe
-  if subscription.last_response_code == 202
-    subscription.destroy
-  end
   @subscriptions = Subscription.all
   erb "subscriptions/index".to_sym
 end
