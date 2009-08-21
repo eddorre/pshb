@@ -92,20 +92,16 @@ class Subscription
     self.last_response_code = response_code = self.call_hub('subscribe', 'http://pshb.heroku.com/endpoint', 'async' )
     
     if response_code == 202
-      self.active = true
+      self.update_attributes(:active => true)
     end
-    
-    self.save
   end
 
   def unsubscribe
     self.last_response_code = response_code = self.call_hub('unsubscribe', 'http://pshb.heroku.com/endpoint', 'async' )
     
     if response_code == 202
-      self.active = false
+      self.update_attributes(:active => false)
     end
-    
-    self.save
   end
   
   def call_hub(hub_mode, endpoint, verify_mode)
@@ -115,8 +111,7 @@ class Subscription
   end
   
   def verify
-    self.verified = true
-    self.save
+    self.update_attributes(:verified => true)
   end
 end
 
@@ -204,6 +199,7 @@ get '/endpoint' do
   feed_url = params['hub.topic']
   hub_challenge = params['hub.challenge']
   if subscription = Subscription.first(:token => verify_token, :feed_url => feed_url)
+    Log.info("Subscription: #{subscription.inspect}")
     subscription.verify
     throw :halt, [ 200, hub_challenge ]
   else
