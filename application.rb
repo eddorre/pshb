@@ -198,8 +198,8 @@ get '/endpoint' do
   verify_token = params['hub.verify_token']
   feed_url = params['hub.topic']
   hub_challenge = params['hub.challenge']
-  if subscription = Subscription.first(:token => verify_token, :feed_url => feed_url)
-    Log.info("Subscription: #{subscription.inspect}")
+  subscription = Subscription.first(:token => verify_token, :feed_url => feed_url)
+  if not subscription.nil?
     subscription.verify
     throw :halt, [ 200, hub_challenge ]
   else
@@ -209,9 +209,9 @@ end
 
 post '/endpoint' do
   Log.info("POST Endpoint Content Type #{request.content_type}")
-  if request.content_type == 'application/atom+xml'
+  if request.content_type == 'application/atom+xml' || request.content_type == 'application/rss+xml'
     content = request.body.string
-    feed_entry = FeedEntry.new(:body => content)
+    feed_entry = FeedEntry.new({ :body => content })
     if feed_entry.save
       status 200
     else
