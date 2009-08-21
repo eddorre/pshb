@@ -208,6 +208,7 @@ get '/endpoint' do
 end
 
 post '/endpoint' do
+  Log.info("POST Endpoint Content Type #{request.content_type}")
   if request.content_type == 'application/atom+xml'
     content = request.body.string
     feed_entry = FeedEntry.new(:body => content)
