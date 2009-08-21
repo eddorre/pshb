@@ -128,7 +128,7 @@ class SimpleTokenGenerator
   end
 end
 
-DataMapper.auto_migrate!
+DataMapper.auto_upgrade!
 
 get '/feed' do
   protected!
